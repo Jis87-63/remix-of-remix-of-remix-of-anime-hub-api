@@ -15,6 +15,7 @@ import {
 const navLinks = [
   { href: "/", label: "Início" },
   { href: "/browse", label: "Explorar" },
+  { href: "/episodes", label: "Episódios" },
   { href: "/docs", label: "API" },
 ];
 

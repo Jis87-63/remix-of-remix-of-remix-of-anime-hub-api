@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-const API_BASE_URL = "https://wdrkjbjomvrrbiyctqzp.supabase.co/functions/v1/anime-api";
+const API_BASE_URL = "https://anihublistv.vercel.app/api";
 
 const codeExamples = {
   javascript: `// Buscar lista de animes em alta
@@ -99,12 +99,12 @@ const endpoints = [
 ];
 
 const corsExample = `// Configuração para chamadas externas
-// URL Base da API: ${API_BASE_URL}
+// URL Base da API: https://anihublistv.vercel.app/api
 
 const API_KEY = 'ak_sua_api_key'; // Sua chave de API
 
 // Exemplo com fetch
-const response = await fetch('${API_BASE_URL}/v1/animes/trending', {
+const response = await fetch('https://anihublistv.vercel.app/api/v1/animes/trending', {
   method: 'GET',
   headers: {
     'Authorization': \`Bearer \${API_KEY}\`,
@@ -118,7 +118,7 @@ console.log(data);
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '${API_BASE_URL}/v1',
+  baseURL: 'https://anihublistv.vercel.app/api/v1',
   headers: {
     'Authorization': \`Bearer \${API_KEY}\`,
     'Content-Type': 'application/json'

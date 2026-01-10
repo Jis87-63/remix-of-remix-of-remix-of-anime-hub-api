@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/api/:path*", "destination": "https://wdrkjbjomvrrbiyctqzp.supabase.co/functions/v1/anime-api/:path*" },
     { "source": "/(.*)", "destination": "/" }
   ],
   "headers": [
