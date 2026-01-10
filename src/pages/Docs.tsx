@@ -21,11 +21,11 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-const API_BASE_URL = "https://anihublistv.vercel.app";
+const API_BASE_URL = "https://wdrkjbjomvrrbiyctqzp.supabase.co/functions/v1/anime-api";
 
 const codeExamples = {
   javascript: `// Buscar lista de animes em alta
-const response = await fetch('${API_BASE_URL}/api/v1/animes/trending', {
+const response = await fetch('${API_BASE_URL}/v1/animes/trending', {
   headers: {
     'Authorization': 'Bearer ak_sua_api_key',
     'Content-Type': 'application/json'
@@ -38,7 +38,7 @@ console.log(animes.data);`,
 import requests
 
 response = requests.get(
-    '${API_BASE_URL}/api/v1/animes/trending',
+    '${API_BASE_URL}/v1/animes/trending',
     headers={
         'Authorization': 'Bearer ak_sua_api_key',
         'Content-Type': 'application/json'
@@ -48,7 +48,7 @@ animes = response.json()
 print(animes['data'])`,
   
   curl: `# Buscar lista de animes em alta
-curl -X GET "${API_BASE_URL}/api/v1/animes/trending" \\
+curl -X GET "${API_BASE_URL}/v1/animes/trending" \\
   -H "Authorization: Bearer ak_sua_api_key" \\
   -H "Content-Type: application/json"`,
 };
@@ -56,75 +56,88 @@ curl -X GET "${API_BASE_URL}/api/v1/animes/trending" \\
 const endpoints = [
   {
     method: "GET",
-    path: "/api/v1/animes/trending",
+    path: "/v1/animes/trending",
     description: "Lista animes em alta no momento",
     params: ["page", "limit"],
   },
   {
     method: "GET",
-    path: "/api/v1/animes/popular",
+    path: "/v1/animes/popular",
     description: "Lista os animes mais populares de todos os tempos",
     params: ["page", "limit"],
   },
   {
     method: "GET",
-    path: "/api/v1/animes/search",
+    path: "/v1/animes/search",
     description: "Busca animes por título, gênero ou ano",
     params: ["q", "genre", "year", "status"],
   },
   {
     method: "GET",
-    path: "/api/v1/animes/:id",
+    path: "/v1/animes/:id",
     description: "Busca detalhes de um anime específico",
     params: ["id"],
   },
   {
     method: "GET",
-    path: "/api/v1/animes/season",
+    path: "/v1/animes/season",
     description: "Lista animes da temporada atual",
     params: ["season", "year", "page", "limit"],
   },
   {
     method: "GET",
-    path: "/api/v1/animes/genre/:genre",
+    path: "/v1/animes/genre/:genre",
     description: "Lista animes por gênero específico",
     params: ["genre", "page", "limit"],
   },
   {
     method: "GET",
-    path: "/api/v1/animes/studio/:studio",
+    path: "/v1/animes/studio/:studio",
     description: "Lista animes por estúdio de produção",
     params: ["studio", "page", "limit"],
   },
 ];
 
-const corsExample = `// Configuração CORS para chamadas externas
-// Adicione estes headers nas suas requisições:
+const corsExample = `// Configuração para chamadas externas
+// URL Base da API: ${API_BASE_URL}
 
-const headers = {
-  'Authorization': 'Bearer ak_sua_api_key',
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-};
+const API_KEY = 'ak_sua_api_key'; // Sua chave de API
 
 // Exemplo com fetch
-fetch('${API_BASE_URL}/api/v1/animes/trending', {
+const response = await fetch('${API_BASE_URL}/v1/animes/trending', {
   method: 'GET',
-  headers: headers,
-  mode: 'cors'
-})
-.then(response => response.json())
-.then(data => console.log(data));
+  headers: {
+    'Authorization': \`Bearer \${API_KEY}\`,
+    'Content-Type': 'application/json'
+  }
+});
+const data = await response.json();
+console.log(data);
 
 // Exemplo com axios
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '${API_BASE_URL}/api/v1',
-  headers: headers
+  baseURL: '${API_BASE_URL}/v1',
+  headers: {
+    'Authorization': \`Bearer \${API_KEY}\`,
+    'Content-Type': 'application/json'
+  }
 });
 
-api.get('/animes/trending').then(res => console.log(res.data));`;
+// Buscar trending
+const trending = await api.get('/animes/trending');
+
+// Buscar por gênero
+const action = await api.get('/animes/genre/Action');
+
+// Buscar por estúdio
+const mappa = await api.get('/animes/studio/MAPPA');
+
+// Pesquisar
+const search = await api.get('/animes/search', { 
+  params: { q: 'Naruto', genre: 'Action' } 
+});`;
 
 const features = [
   {

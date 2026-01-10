@@ -1,1 +1,4 @@
 project_id = "wdrkjbjomvrrbiyctqzp"
+
+[functions.anime-api]
+verify_jwt = false
