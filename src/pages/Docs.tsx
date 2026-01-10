@@ -21,11 +21,14 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
+const API_BASE_URL = "https://anihublistv.vercel.app";
+
 const codeExamples = {
   javascript: `// Buscar lista de animes em alta
-const response = await fetch('https://seusite.com/v1/animes/trending', {
+const response = await fetch('${API_BASE_URL}/api/v1/animes/trending', {
   headers: {
-    'Authorization': 'Bearer ak_sua_api_key'
+    'Authorization': 'Bearer ak_sua_api_key',
+    'Content-Type': 'application/json'
   }
 });
 const animes = await response.json();
@@ -35,14 +38,17 @@ console.log(animes.data);`,
 import requests
 
 response = requests.get(
-    'https://seusite.com/v1/animes/trending',
-    headers={'Authorization': 'Bearer ak_sua_api_key'}
+    '${API_BASE_URL}/api/v1/animes/trending',
+    headers={
+        'Authorization': 'Bearer ak_sua_api_key',
+        'Content-Type': 'application/json'
+    }
 )
 animes = response.json()
 print(animes['data'])`,
   
   curl: `# Buscar lista de animes em alta
-curl -X GET "https://seusite.com/v1/animes/trending" \\
+curl -X GET "${API_BASE_URL}/api/v1/animes/trending" \\
   -H "Authorization: Bearer ak_sua_api_key" \\
   -H "Content-Type: application/json"`,
 };
@@ -50,35 +56,75 @@ curl -X GET "https://seusite.com/v1/animes/trending" \\
 const endpoints = [
   {
     method: "GET",
-    path: "/v1/animes/trending",
+    path: "/api/v1/animes/trending",
     description: "Lista animes em alta no momento",
     params: ["page", "limit"],
   },
   {
     method: "GET",
-    path: "/v1/animes/popular",
+    path: "/api/v1/animes/popular",
     description: "Lista os animes mais populares de todos os tempos",
     params: ["page", "limit"],
   },
   {
     method: "GET",
-    path: "/v1/animes/search",
+    path: "/api/v1/animes/search",
     description: "Busca animes por título, gênero ou ano",
     params: ["q", "genre", "year", "status"],
   },
   {
     method: "GET",
-    path: "/v1/animes/:id",
+    path: "/api/v1/animes/:id",
     description: "Busca detalhes de um anime específico",
     params: ["id"],
   },
   {
     method: "GET",
-    path: "/v1/animes/season",
+    path: "/api/v1/animes/season",
     description: "Lista animes da temporada atual",
     params: ["season", "year", "page", "limit"],
   },
+  {
+    method: "GET",
+    path: "/api/v1/animes/genre/:genre",
+    description: "Lista animes por gênero específico",
+    params: ["genre", "page", "limit"],
+  },
+  {
+    method: "GET",
+    path: "/api/v1/animes/studio/:studio",
+    description: "Lista animes por estúdio de produção",
+    params: ["studio", "page", "limit"],
+  },
 ];
+
+const corsExample = `// Configuração CORS para chamadas externas
+// Adicione estes headers nas suas requisições:
+
+const headers = {
+  'Authorization': 'Bearer ak_sua_api_key',
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+};
+
+// Exemplo com fetch
+fetch('${API_BASE_URL}/api/v1/animes/trending', {
+  method: 'GET',
+  headers: headers,
+  mode: 'cors'
+})
+.then(response => response.json())
+.then(data => console.log(data));
+
+// Exemplo com axios
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: '${API_BASE_URL}/api/v1',
+  headers: headers
+});
+
+api.get('/animes/trending').then(res => console.log(res.data));`;
 
 const features = [
   {
@@ -292,6 +338,46 @@ export default function Docs() {
                   {codeExamples[activeTab]}
                 </code>
               </pre>
+            </div>
+
+            {/* CORS Configuration */}
+            <div className="mt-10">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2.5 rounded-xl bg-primary/10">
+                  <Globe className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-foreground">
+                    Configuração CORS
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Para chamadas de outros sites e aplicações
+                  </p>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-lg">
+                <div className="flex items-center border-b border-border bg-secondary/30 px-5 py-3.5">
+                  <span className="text-sm font-medium text-foreground">Configuração CORS</span>
+                </div>
+                <pre className="p-6 overflow-x-auto">
+                  <code className="text-sm text-muted-foreground font-mono whitespace-pre-wrap">
+                    {corsExample}
+                  </code>
+                </pre>
+              </div>
+
+              <div className="mt-6 p-5 rounded-xl bg-primary/5 border border-primary/20">
+                <h4 className="font-semibold text-foreground mb-2">Headers CORS Habilitados</h4>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• <code className="text-primary">Access-Control-Allow-Origin: *</code></li>
+                  <li>• <code className="text-primary">Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS</code></li>
+                  <li>• <code className="text-primary">Access-Control-Allow-Headers: Authorization, Content-Type, Accept</code></li>
+                </ul>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  A API suporta requisições de qualquer origem. Para segurança, sempre use sua API Key.
+                </p>
+              </div>
             </div>
           </motion.div>
         </div>
