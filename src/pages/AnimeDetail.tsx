@@ -4,9 +4,11 @@ import { motion } from "framer-motion";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { WatchlistButton } from "@/components/WatchlistButton";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { TrailerPlayer } from "@/components/TrailerPlayer";
+import { StreamingSelector } from "@/components/StreamingSelector";
 import { useAnimeById } from "@/hooks/useAnime";
 import { getStatusLabel, getFormatLabel } from "@/lib/anilist";
 
@@ -127,6 +129,18 @@ const AnimeDetail = () => {
               transition={{ delay: 0.2 }}
               className="mt-4 space-y-3"
             >
+              {/* Watch Button */}
+              <StreamingSelector
+                animeTitle={title}
+                animeId={anime.id}
+                thumbnail={anime.coverImage.large}
+              >
+                <Button className="w-full gap-2" size="lg">
+                  <Play className="h-5 w-5" />
+                  Assistir Agora
+                </Button>
+              </StreamingSelector>
+
               <WatchlistButton
                 animeId={anime.id}
                 animeTitle={title}

@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { VideoPlayer } from "@/components/VideoPlayer";
+import { StreamingSelector } from "@/components/StreamingSelector";
 import { 
   Play, 
   Clock, 
@@ -27,13 +27,6 @@ function EpisodeCard({ schedule }: { schedule: AiringSchedule }) {
   const title = media.title.english || media.title.romaji;
   const studio = media.studios.nodes[0]?.name || "Desconhecido";
   const isPast = airingAt * 1000 < Date.now();
-
-  // Generate sample streaming sources (in real app, these would come from an API)
-  const streamingSources = isPast ? [
-    { provider: "Crunchyroll", url: `https://crunchyroll.com/watch/${media.id}`, quality: "1080p" },
-    { provider: "Funimation", url: `https://funimation.com/shows/${media.id}`, quality: "1080p" },
-    { provider: "Netflix", url: `https://netflix.com/title/${media.id}`, quality: "4K" },
-  ] : [];
 
   return (
     <motion.div
@@ -92,17 +85,17 @@ function EpisodeCard({ schedule }: { schedule: AiringSchedule }) {
               <span className="font-medium">{formatAiringTime(airingAt)}</span>
             </div>
             {isPast ? (
-              <VideoPlayer
-                title={`${title} - Episódio ${episode}`}
+              <StreamingSelector
+                animeTitle={title}
+                animeId={media.id}
+                episodeNumber={episode}
                 thumbnail={media.coverImage.large}
-                streamingUrls={streamingSources}
-                showThumbnail={false}
               >
                 <Button size="sm" variant="default" className="gap-1 text-xs">
                   <Play className="h-3 w-3" />
                   Assistir
                 </Button>
-              </VideoPlayer>
+              </StreamingSelector>
             ) : (
               <Link to={`/anime/${media.id}`}>
                 <Button size="sm" variant="ghost" className="gap-1 text-xs">
@@ -117,7 +110,6 @@ function EpisodeCard({ schedule }: { schedule: AiringSchedule }) {
     </motion.div>
   );
 }
-
 function EpisodeCardSkeleton() {
   return (
     <div className="flex gap-4 p-4 rounded-xl border border-border bg-card">
