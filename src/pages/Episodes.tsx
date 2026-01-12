@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { VideoPlayer } from "@/components/VideoPlayer";
 import { 
   Play, 
   Clock, 
@@ -27,69 +28,92 @@ function EpisodeCard({ schedule }: { schedule: AiringSchedule }) {
   const studio = media.studios.nodes[0]?.name || "Desconhecido";
   const isPast = airingAt * 1000 < Date.now();
 
+  // Generate sample streaming sources (in real app, these would come from an API)
+  const streamingSources = isPast ? [
+    { provider: "Crunchyroll", url: `https://crunchyroll.com/watch/${media.id}`, quality: "1080p" },
+    { provider: "Funimation", url: `https://funimation.com/shows/${media.id}`, quality: "1080p" },
+    { provider: "Netflix", url: `https://netflix.com/title/${media.id}`, quality: "4K" },
+  ] : [];
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="group relative overflow-hidden rounded-xl border border-border bg-card hover:border-primary/50 transition-all duration-300"
     >
-      <Link to={`/anime/${media.id}`}>
-        <div className="flex gap-4 p-4">
-          {/* Cover Image */}
-          <div className="relative shrink-0 w-24 h-32 rounded-lg overflow-hidden">
-            <img
-              src={media.coverImage.large}
-              alt={title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            <div className="absolute bottom-2 left-2 right-2">
-              <Badge variant="secondary" className="text-xs bg-primary/90 text-primary-foreground">
-                EP {episode}
-              </Badge>
-            </div>
+      <div className="flex gap-4 p-4">
+        {/* Cover Image */}
+        <Link to={`/anime/${media.id}`} className="relative shrink-0 w-24 h-32 rounded-lg overflow-hidden">
+          <img
+            src={media.coverImage.large}
+            alt={title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute bottom-2 left-2 right-2">
+            <Badge variant="secondary" className="text-xs bg-primary/90 text-primary-foreground">
+              EP {episode}
+            </Badge>
           </div>
+        </Link>
 
-          {/* Info */}
-          <div className="flex-1 min-w-0 flex flex-col justify-between">
-            <div>
+        {/* Info */}
+        <div className="flex-1 min-w-0 flex flex-col justify-between">
+          <div>
+            <Link to={`/anime/${media.id}`}>
               <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
                 {title}
               </h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                {studio}
-              </p>
-              <div className="flex items-center gap-3 mt-2">
-                {media.averageScore && (
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
-                    <span>{media.averageScore}%</span>
-                  </div>
-                )}
+            </Link>
+            <p className="text-sm text-muted-foreground mt-1">
+              {studio}
+            </p>
+            <div className="flex items-center gap-3 mt-2">
+              {media.averageScore && (
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Tv className="h-3 w-3" />
-                  <span>{media.format}</span>
+                  <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
+                  <span>{media.averageScore}%</span>
                 </div>
+              )}
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Tv className="h-3 w-3" />
+                <span>{media.format}</span>
               </div>
-            </div>
-
-            <div className="flex items-center justify-between mt-3">
-              <div className={`flex items-center gap-1.5 text-sm ${isPast ? 'text-green-500' : 'text-primary'}`}>
-                {isPast ? (
-                  <Clock className="h-4 w-4" />
-                ) : (
-                  <Timer className="h-4 w-4" />
-                )}
-                <span className="font-medium">{formatAiringTime(airingAt)}</span>
-              </div>
-              <Button size="sm" variant="ghost" className="gap-1 text-xs">
-                Ver detalhes
-                <ChevronRight className="h-3 w-3" />
-              </Button>
             </div>
           </div>
+
+          <div className="flex items-center justify-between mt-3">
+            <div className={`flex items-center gap-1.5 text-sm ${isPast ? 'text-green-500' : 'text-primary'}`}>
+              {isPast ? (
+                <Clock className="h-4 w-4" />
+              ) : (
+                <Timer className="h-4 w-4" />
+              )}
+              <span className="font-medium">{formatAiringTime(airingAt)}</span>
+            </div>
+            {isPast ? (
+              <VideoPlayer
+                title={`${title} - Episódio ${episode}`}
+                thumbnail={media.coverImage.large}
+                streamingUrls={streamingSources}
+                showThumbnail={false}
+              >
+                <Button size="sm" variant="default" className="gap-1 text-xs">
+                  <Play className="h-3 w-3" />
+                  Assistir
+                </Button>
+              </VideoPlayer>
+            ) : (
+              <Link to={`/anime/${media.id}`}>
+                <Button size="sm" variant="ghost" className="gap-1 text-xs">
+                  Ver detalhes
+                  <ChevronRight className="h-3 w-3" />
+                </Button>
+              </Link>
+            )}
+          </div>
         </div>
-      </Link>
+      </div>
     </motion.div>
   );
 }

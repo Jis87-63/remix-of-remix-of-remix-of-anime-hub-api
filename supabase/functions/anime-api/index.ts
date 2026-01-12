@@ -237,35 +237,45 @@ async function getAnimeByStudio(studioName: string, page = 1, perPage = 20) {
 // deno-lint-ignore no-explicit-any
 async function validateApiKey(apiKey: string, supabase: SupabaseClient<any>) {
   if (!apiKey || !apiKey.startsWith('ak_')) {
-    return { valid: false as const, error: 'Invalid API key format' };
+    console.log('Invalid API key format:', apiKey?.substring(0, 5));
+    return { valid: false as const, error: 'Invalid API key format. API keys should start with "ak_"' };
   }
 
-  const keyPrefix = apiKey.substring(0, 10);
+  // Hash the API key to compare with stored hash
+  const encoder = new TextEncoder();
+  const data = encoder.encode(apiKey);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const keyHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+  console.log('Looking for key with hash prefix:', keyHash.substring(0, 10));
   
-  const { data, error } = await supabase
+  // Find the key by hash
+  const { data: keyData, error } = await supabase
     .from('api_keys')
-    .select('id, is_active, user_id, requests_count')
-    .eq('key_prefix', keyPrefix)
+    .select('id, is_active, user_id, requests_count, key_hash')
+    .eq('key_hash', keyHash)
     .eq('is_active', true)
     .single();
 
-  if (error || !data) {
-    console.log('API key validation failed:', error?.message);
+  if (error || !keyData) {
+    console.log('API key validation failed:', error?.message || 'Key not found');
     return { valid: false as const, error: 'Invalid or inactive API key' };
   }
 
-  const keyData = data as { id: string; is_active: boolean; user_id: string; requests_count: number };
+  const result = keyData as { id: string; is_active: boolean; user_id: string; requests_count: number };
 
   // Update last used and request count
   await supabase
     .from('api_keys')
     .update({ 
       last_used_at: new Date().toISOString(),
-      requests_count: (keyData.requests_count || 0) + 1
+      requests_count: (result.requests_count || 0) + 1
     })
-    .eq('id', keyData.id);
+    .eq('id', result.id);
 
-  return { valid: true as const, userId: keyData.user_id };
+  console.log('API key validated successfully for user:', result.user_id);
+  return { valid: true as const, userId: result.user_id };
 }
 
 Deno.serve(async (req) => {
