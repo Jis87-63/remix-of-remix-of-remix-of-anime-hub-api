@@ -391,6 +391,49 @@ export default function Docs() {
                   A API suporta requisições de qualquer origem. Para segurança, sempre use sua API Key.
                 </p>
               </div>
+
+              {/* Machine-readable documentation links */}
+              <div className="mt-6 p-5 rounded-xl bg-secondary/50 border border-border">
+                <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                  <Terminal className="h-4 w-4 text-primary" />
+                  Documentação para IAs e Automações
+                </h4>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Para integração com ChatGPT, Claude, ou outras IAs, use os links abaixo:
+                </p>
+                <div className="space-y-2">
+                  <a
+                    href="https://anihublistv.vercel.app/api-docs.json"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 p-3 rounded-lg bg-background hover:bg-primary/5 border border-border hover:border-primary/30 transition-colors"
+                  >
+                    <Code2 className="h-5 w-5 text-primary" />
+                    <div className="flex-1">
+                      <span className="font-medium text-foreground">api-docs.json</span>
+                      <span className="text-xs text-muted-foreground ml-2">
+                        Documentação em formato JSON (recomendado para IAs)
+                      </span>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  </a>
+                  <a
+                    href="https://anihublistv.vercel.app/api-docs.txt"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 p-3 rounded-lg bg-background hover:bg-primary/5 border border-border hover:border-primary/30 transition-colors"
+                  >
+                    <Book className="h-5 w-5 text-primary" />
+                    <div className="flex-1">
+                      <span className="font-medium text-foreground">api-docs.txt</span>
+                      <span className="text-xs text-muted-foreground ml-2">
+                        Documentação em texto plano
+                      </span>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  </a>
+                </div>
+              </div>
             </div>
           </motion.div>
         </div>
